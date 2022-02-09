@@ -35,11 +35,6 @@ def chooseCave():
     while cave not in ('1', '2'):
         print('Which cave will you go into? (1 or 2)')
         cave = input()
-    if cave not in ('1', '2'):
-        print(cave+' is not an option.')
-        cave = random.choice(['1', '2'])
-        print(f'let\'s randomly go with cave {cave}')
-    # design: unexpected cave input
 
     # return caves
     return cave
@@ -97,12 +92,11 @@ while playAgain in ('yes', 'y'):
 '''
 Note from student:
 
-I have corrected anywhere from 5 to 20 errors depending how to count them:
+I have corrected anywhere from 5 to 19 errors depending how to count them:
     - 4 or 6 for syntax depending whether to count multiple per line
     - 1 for spelling
     - 0 or 2 for pylint suggestion R1714: `A==B & A==C` -> `A in (B, C)`.
     - 0 or 2 for stylistic suggestions: consistent single-quotes.
-    - 0 or 1 for design - unexpected cave input (adds if-statement).
     - 0 or 1 for design - unexpected playAgain input (adds while-loop).
     - 0 or 2 for style - replacing empty print statements with '\n\r' in previous print statements
     - 0 or 1 for design - accepting 'n' as 'no' for user input
