@@ -17,7 +17,8 @@ def displayIntro():
 
 def chooseCave():
     cave = ''
-    while cave != '1' and cave != '2':
+    # while cave != '1' and cave != '2':
+    while cave not in ('1', '2'):
         print('Which cave will you go into? (1 or 2)')
         cave = input()
 
@@ -47,8 +48,9 @@ def checkCave(chosenCave):
 
 playAgain = 'yes'
 # while playAgain = 'yes' or playAgain = 'y':
-while playAgain == 'yes' or playAgain == 'y':
+while playAgain in ('yes', 'y'):
 # syntax: equality operations use two parentheses
+# pylint R1714 consider-using-in
     displayIntro()
     # caveNumber = choosecave()
     caveNumber = chooseCave()
