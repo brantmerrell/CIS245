@@ -81,7 +81,7 @@ while playAgain in ('yes', 'y'):
         playAgain = input()
     # design: unexpected playAgain input
     # if playAgain == "no":
-    if playAgain not in ('no', 'n'):
+    if playAgain in ('no', 'n'):
     # design: 'y' is accepted as 'yes' so 'n' should be accepted as 'no'
     # style: consistent single-quotes
         # print('Thanks for planing')
@@ -92,7 +92,10 @@ while playAgain in ('yes', 'y'):
 '''
 Note from student:
 
-I have corrected anywhere from 5 to 19 errors depending how to count them:
+I added a while-loop for unexpected playAgain input. 
+There might be a better way so I welcome feedback.
+
+I have corrected anywhere from 5 to 19 errors depending how they are counted:
     - 4 or 6 for syntax depending whether to count multiple per line
     - 1 for spelling
     - 0 or 2 for pylint suggestion R1714: `A==B & A==C` -> `A in (B, C)`.
@@ -101,10 +104,6 @@ I have corrected anywhere from 5 to 19 errors depending how to count them:
     - 0 or 2 for style - replacing empty print statements with '\n\r' in previous print statements
     - 0 or 1 for design - accepting 'n' as 'no' for user input
     - 0 or 4 for pylint suggestions C0114/C0116: module & function docstrings
-I have left the following unsolved:
-    - pylint error C0103 (invalid-name) - ____ not snake_case: 6 counts
-    - pylint error C0103 (invalid-name) - ____ not UPPER_CASE: 4 counts
-    - pylint error W0104 (pointless-string-statement) - this note.
 
 Which corrections are in scope of the assignment? Am I missing any?
 '''
