@@ -21,7 +21,9 @@ def chooseCave():
         print('Which cave will you go into? (1 or 2)')
         cave = input()
 
-    return caves
+    # return caves
+    return cave
+    # syntax: name 'caves' is not defined; function creates 'cave'
 
 def checkCave(chosenCave):
     print('You approach the cave...')
@@ -39,12 +41,18 @@ def checkCave(chosenCave):
     if chosenCave == str(friendlyCave):
         print('Gives you his treasure!')
     else:
-        print 'Gobbles you down in one bite!'
+        # print 'Gobbles you down in one bite!'
+        print('Gobbles you down in one bite!')
+        # syntax: missing parentheses
 
 playAgain = 'yes'
-while playAgain = 'yes' or playAgain = 'y':
+# while playAgain = 'yes' or playAgain = 'y':
+while playAgain == 'yes' or playAgain == 'y':
+# syntax: equality operations use two parentheses
     displayIntro()
-    caveNumber = choosecave()
+    # caveNumber = choosecave()
+    caveNumber = chooseCave()
+    # syntax: `def chooseCave():...` is camelCased
     checkCave(caveNumber)
     
     print('Do you want to play again? (yes or no)')
