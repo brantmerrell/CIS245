@@ -1,6 +1,8 @@
+import re
+import unittest
+
 def primary_colors_strings(my_input):
     '''return list of primary colors in string.'''
-    import re
     result = []
     if re.search(re.compile('[Bb][Ll][Uu][Ee]'), my_input):
         result.append('blue')
@@ -10,7 +12,7 @@ def primary_colors_strings(my_input):
         result.append('red')
     return result
 
-import unittest
+
 class testPrimaryColorsStringsFunction(unittest.TestCase):
     '''test primary_colors_strings function'''
 
@@ -31,8 +33,8 @@ class testPrimaryColorsStringsFunction(unittest.TestCase):
 
     def test_yellow_with_five_l(self):
         '''function should recognize yellow with up to 5 ls'''
-        yellow_result_3 = primary_colors_strings('yelllow')
-        self.assertTrue('yellow' in yellow_result_3)
+        yellow_result_5 = primary_colors_strings('yelllllow')
+        self.assertTrue('yellow' in yellow_result_5)
 
 if __name__=='__main__':
     unittest.main()

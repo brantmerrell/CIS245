@@ -2,29 +2,27 @@ Choose one of the questions below for their initial discussion posting.  A minim
 
 ## 1) Discussion 1
 **There are various software code management solutions available.  Each has its pros and cons.  Perform research for 3 different SCM tools.  What are the pros and cons of each?  Is there an associated cost?  Is one more popular than the other?  Imagine that you’re a software development manager, which would you choose and why?**
-Code management tools:
-    - github
-    - BitBucket
-    - Mercurial
-    - Monotone
-    - CVS
-    - SVN Subversion
-    - TFS
-    - Codacy
-    - Veracode
+
 ## 2) Discussion 2
 **There are various tools for conducting peer reviews.  Perform research on peer review tools.  List several tools along with their pros and cons if any.  Is there a cost?  Imagine that you’re a software development manager, which would you choose and why?**
 Peer review tools:
-    - Merge Requests
-    - DevOps testing
-    - Embold
-    - 
+ - Merge Requests  
+ - DevOps testing  
+ - Embold  
+ - 
 ### Unit Tests
-The following code snippet contains a function followed by unit tests:
+Some of the many benefits of unit tests are,  
+ - They describe the developer's intentions and lack thereof;  
+ - They highlight which discussions need to be had in the review process;  
+ - They defend the function from oversimplification and refactoring processes;  
+ - They enable reviewers to step through code in debuggers;  
+For example, consider the following function followed by unit tests:
 ```
+import re
+import unittest
+
 def primary_colors_strings(my_input):
     '''return list of primary colors in string.'''
-    import re
     result = []
     if re.search(re.compile('[Bb][Ll][Uu][Ee]'), my_input):
         result.append('blue')
@@ -34,7 +32,7 @@ def primary_colors_strings(my_input):
         result.append('red')
     return result
 
-import unittest
+
 class testPrimaryColorsStringsFunction(unittest.TestCase):
     '''test primary_colors_strings function'''
 
@@ -55,17 +53,19 @@ class testPrimaryColorsStringsFunction(unittest.TestCase):
 
     def test_yellow_with_five_l(self):
         '''function should recognize yellow with up to 5 ls'''
-        yellow_result_3 = primary_colors_strings('yelllow')
-        self.assertTrue('yellow' in yellow_result_3)
+        yellow_result_5 = primary_colors_strings('yelllllow')
+        self.assertTrue('yellow' in yellow_result_5)
 
 if __name__=='__main__':
     unittest.main()
 else:
     unittest.main(module='primary_colors_strings', exit=False)
 ```
-These unit tests help describe the primary developer's intentions (and lack thereof) to reviewers and to future developers.
+`def test_yellow_with_five_l` shows that it was the developer's intention that 'yelllllow' with five Ls counts as 'yellow'. `def test_red_lowercase` doesn't pass, which simultaneously shows that it's the developer's intention that `A_red_CDEF` be counted as red, and that the code currently fails to do so (pattern `[Rr][Ee][D]` matches red with uppercase D - it needs to change to `[Rr][Ee][Dd]` to match any-case).  
 
-For example, we can see in `def test_yellow_with_five_l` that it was the developer's intention that 'yelllllow' with five Ls counts as 'yellow'. This decision might not pass review, because it's a very random misspelling. After all, bluue with two Us doesn't count as blue, so why should 'yelllllow' with five Ls? The reviewers need to have this conversation before signing off on the work. Either way though, there is a unit test that waves its hand and says, "this is what this function does." 
+Rather than glancing at the function and saying, "that seems right," reviewers should ask, why should we count yelllllow as yellow? We do not count yelow as yellow or bluue as blue, what is it about 2-5 Ls that we trust so much when detecting yellow? The unit tests highlight the oddities of the function provide a discussion point in the review process.  
 
-On the flip side, I've commented out `def test_red_lowercase` because it doesn't pass. The reason it doesn't pass is that `primary_colors_strings('A_red_CDEF')` doesn't return 'red' in its return list. More specifically, `primary_colors_strings` uses the regex pattern `[Rr][Ee][D]` to look for red in the input string. [Rr] means R or r, [Ee] means E or e, [D] just means D. If `test_red_lowercase` is not present, it tells reviewers that using [D] instead of [Dd] is probably an accident. If it fails, it tells the developer to fix something. 
+If `[Bb][Ll][Uu][Ee]` is changed to `blue`, `test_blue_rANdOmCasE` fails - unless `my_input` is changed to `my_input.lower()`. If `[Yy][Ee][Ll]{2,5}[Oo][Ww]` is changed to `yellow`, `test_yellow_with_five_l` fails regardless of whether `my_input` is set `.tolower()`.The unit tests defend the function from being oversimplified in the review and refactoring processes.
+
+If the function were more complicated, for example if it called other functions which called other functions, the developers could set breakpoints in the function and reach them in a debugger using unit tests. This would give them an idea of how it was designed regardless of whether the tests are likely inputs or written comprehensively.
 
