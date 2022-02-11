@@ -4,18 +4,25 @@ Choose one of the questions below for their initial discussion posting.  A minim
 **There are various software code management solutions available.  Each has its pros and cons.  Perform research for 3 different SCM tools.  What are the pros and cons of each?  Is there an associated cost?  Is one more popular than the other?  Imagine that you’re a software development manager, which would you choose and why?**
 
 ## 2) Discussion 2
-**There are various tools for conducting peer reviews.  Perform research on peer review tools.  List several tools along with their pros and cons if any.  Is there a cost?  Imagine that you’re a software development manager, which would you choose and why?**
+**There are various tools for conducting peer reviews.  Perform research on peer review tools.  List several tools along with their pros and cons if any.  Is there a cost?  Imagine that you’re a software development manager, which would you choose and why?**  
 Peer review tools:
- - Merge Requests  
- - DevOps testing  
- - Embold  
- - 
-### Unit Tests
-Some of the many benefits of unit tests are,  
- - They describe the developer's intentions and lack thereof;  
- - They highlight which discussions need to be had in the review process;  
- - They defend the function from oversimplification and refactoring processes;  
- - They enable reviewers to step through code in debuggers;  
+
+### Review Board
+Review Board is a flexible code-review platform hosted online. It comes with a standard package of options including commenting, replying to comments, approving changes, tracking issues, and automated code review. It stands out for being lightweight and for its flexibility not only with Git, but also Mercurial and a handful of other version control systems.
+
+### GitLab
+GitLab is a DevOps-oriented git management platform. It allows teams to merge git branches into each other using "Merge Requests", in which reviewers can see a history of commits, pipelines, and changes within a branch before agreeing to merge it into the destination branch. It's designed for teams that use CI (Continuous Integration) and CD (Continuous Deployment) practices.  
+
+Among other things, that means the branch being merged should be identical to its destination branch in every way except in the changes made intentionally by the branch's creator. In human language, that sounds obvious. However in practice, the branch being merged and the branch it is being merged into are often both being changed on a regular basis, so making them identical requires a `git rebase` (or something analogous for other version control systems - GitLab only supports Git). GitLab makes this expectation more possible by providing a "rebase" button.
+
+As part of its DevOps emphasis, GitLab encourages development teams to automate the testing process on a regular basis, and is built to make this as easy as possible. GitLab can re-run tests on a git branch each time the branch is modified and block branches from being merged if they do not pass certain tests. 
+
+### Continuous Integration (CI)
+CI has come to mean several things. It began as a practice for merging all branches to the central branch on a frequent basis. It more broadly refers to a set of DevOps practices that include using test-driven development and automatically running tests when merging code. CI uses unit tests to make code review more coherent and efficient. In a CI-assisted code review, 
+ - The developer's intentional and unintentional work is showcased by tests or the lack thereof;  
+ - Oddities of the code are represented as concise tests;  
+ - Code is defended from oversimplification in refactoring by tests;  
+ - Reviewers are able to follow highly complicated work by stepping through tests in debug mode;  
 For example, consider the following function followed by unit tests:
 ```
 import re
