@@ -1,8 +1,11 @@
 import re
 import unittest
+from unittest import mock
 
-def primary_colors_strings(my_input):
+def primary_colors_strings(my_input=None):
     '''return list of primary colors in string.'''
+    if my_input is None:
+        my_input = input('input string: ')
     result = []
     if re.search(re.compile('[Bb][Ll][Uu][Ee]'), my_input):
         result.append('blue')
@@ -11,6 +14,11 @@ def primary_colors_strings(my_input):
     if re.search(re.compile('[Rr][Ee][D]'), my_input):
         result.append('red')
     return result
+
+def two_inputs():
+    input_1=input('input_1: ')
+    input_2=input('input_2: ')
+    return (input_1, input_2)
 
 
 class testPrimaryColorsStringsFunction(unittest.TestCase):
@@ -36,7 +44,27 @@ class testPrimaryColorsStringsFunction(unittest.TestCase):
         yellow_result_5 = primary_colors_strings('yelllllow')
         self.assertTrue('yellow' in yellow_result_5)
 
-if __name__=='__main__':
+    def test_interactive_single(self):
+        '''how can a unit test pass a value into an interactive function?'''
+        original_input = unittest.mock.builtins.input
+        unittest.mock.builtins.input = lambda _: "blueyellow"
+        self.assertTrue('blue' in primary_colors_strings())
+    
+    # def test_linting(self):
+        # '''test pylint of file'''
+
+
+    def test_two_inputs(self):
+        '''how can a unit test test pass multiple values into an interactive function?'''
+        mock_args = ['foo', 'bar']
+        with mock.patch('builtins.input') as mocked_input:
+            mocked_input.side_effect = mock_args
+            result = two_inputs()
+        self.assertTrue('foo' in result)
+        self.assertTrue('bar' in result)
+
+
+if __name__=='__unittest.main__':
     unittest.main()
 else:
     unittest.main(module='primary_colors_strings', exit=False)
