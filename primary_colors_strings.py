@@ -1,6 +1,9 @@
+'''module to learn how the unittest and pylint modules work'''
+
 import re
 import unittest
 from unittest import mock
+import pylint
 
 def primary_colors_strings(my_input=None):
     '''return list of primary colors in string.'''
@@ -11,28 +14,29 @@ def primary_colors_strings(my_input=None):
         result.append('blue')
     if re.search(re.compile('[Yy][Ee][Ll]{2,5}[Oo][Ww]'), my_input):
         result.append('yellow')
-    if re.search(re.compile('[Rr][Ee][D]'), my_input):
+    if re.search(re.compile('[Rr][Ee][Dd]'), my_input):
         result.append('red')
     return result
 
 def two_inputs():
-    input_1=input('input_1: ')
-    input_2=input('input_2: ')
+    '''function to learn how to mock 2 inputs during testing'''
+    input_1 = input('input_1: ')
+    input_2 = input('input_2: ')
     return (input_1, input_2)
 
 
-class testPrimaryColorsStringsFunction(unittest.TestCase):
+class TestPrimaryColorsStringsFunction(unittest.TestCase):
     '''test primary_colors_strings function'''
 
-    def test_blue_rANdOmCasE(self):
+    def test_blue_randomcase(self):
         '''Function should do a case-insensitive test for "blue".'''
         result = primary_colors_strings('a_BlUe_and_yellow_cdEF')
         self.assertTrue('blue' in result)
 
-    # def test_red_lowercase(self):
+    def test_red_lowercase(self):
         '''function should do a case-insensitive test for red'''
-        # result = primary_colors_strings('A_red_CDEF')
-        # self.assertTrue('red' in result)
+        result = primary_colors_strings('A_red_CDEF')
+        self.assertTrue('red' in result)
 
     def test_yellow_with_one_l(self):
         '''function should not recognize yellow with only one l'''
@@ -46,13 +50,8 @@ class testPrimaryColorsStringsFunction(unittest.TestCase):
 
     def test_interactive_single(self):
         '''how can a unit test pass a value into an interactive function?'''
-        original_input = unittest.mock.builtins.input
         unittest.mock.builtins.input = lambda _: "blueyellow"
         self.assertTrue('blue' in primary_colors_strings())
-    
-    # def test_linting(self):
-        # '''test pylint of file'''
-
 
     def test_two_inputs(self):
         '''how can a unit test test pass multiple values into an interactive function?'''
@@ -64,7 +63,10 @@ class testPrimaryColorsStringsFunction(unittest.TestCase):
         self.assertTrue('bar' in result)
 
 
-if __name__=='__unittest.main__':
+print(pylint.epylint.py_run('primary_colors_strings.py'))
+
+
+if __name__ == '__main__':
     unittest.main()
 else:
     unittest.main(module='primary_colors_strings', exit=False)
