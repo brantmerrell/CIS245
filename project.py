@@ -5,12 +5,22 @@ https://openweathermap.org/current#data
 Feedback from pseudocode draft:
  - lack of input validation to make sure a zipcode is a zipcode or a city name is alphabetical.
  - pass units=imperial|other into query string and let webservice do conversion work.
+
+ToDo / Wishlist:
+ - construct query parameter using requests library rather than manually
+ - prompt user for country code so pgeocode can look up zip internationally
+ - prompt user for measurement system, default according to country
+ - get API key through interactive login to openweathermap.org
+ - choose API endpoint through menu-based selection
+ - print chart of weather forecast using ascii art
 '''
 
+import os
 import unittest
 from unittest import mock
-#import requests
+import requests
 import pylint
+import pgeocode
 # To-Do: app ID
     # hard-code?
     # get automatically?
@@ -26,7 +36,6 @@ def prompt_location_info():
         'state': '',
         'zip': ''
     }
-    print('please enter city, state, and zip:')
     result['city'] = input('city: ')
     result['state'] = input('state: ')
     result['zip'] = input('zip: ')
@@ -56,43 +65,36 @@ def location_info_is_valid(location):
     return result
 
 
+def construct_url(zip_code, api_key, country_code='us'):
+    '''
+    constructs url from
+        - API Key
+        - latitude & longitude
+        - prompt_information_info
+    '''
+    result = 'http://api.openweathermap.org/data/2.5/weather?'
+    zips = pgeocode.Nominatim(country_code)
+    zip_data = zips.query_postal_code(zip_code)
+    latitude = zip_data['latitude']
+    longitude = zip_data['longitude']
+    result += f'lat={latitude}&lon={longitude}&appid={api_key}'
+    return result
 
 
-# evaluate whether info is valid and sufficient to construct query parameters
-def construct_url():
-    return None
-    # if so, proceed to step 2
-    # if not, return to step 1 with message to user
-# step 3 get_forecast(): send the query parameters to
-    # units = imperial|metric|other
-    # api.openweathermap.org/data/2.5/weather?q={city,state}|{zip}&{app_id}
-    # inform user if connection was successful
-    # print any messages (error or otherwise) from the response
+def get_weather(weather_url):
+    '''
+    get weather from input url
 
-# step 4 format_forecast(): format response data for user-readability
-    # parse from json or xml to dict object data
-    # report = {}
-    # report[temp] = format_temperature(main[temp], sys[sys.country])
-    # report[feels_like] = format_temperature(main.feels_like, sys[sys.country])
-    # report[temp_range[0]] = format_temperature(main.temp_min, sys[sys.country])
-    # report[temp_range[1]] = format_temperature(main.temp_max, sys[sys.country])
-    # report[pressure] = format_pressure(main.pressure, sys[sys.country])
-    # report[humidity] = format_humidity(main.humidity)
-    # report[wind_speed] = format_speed(wind.speed, sys[sys.country])
-    # report[wind_direction] = format_direction(wind.direction):
+    merge with construct_url?
+    '''
+    response = requests.get(weather_url).json()
+    return response['main']
 
-# step 5: return / print weather forecast:
-    # return report object constructed in step 4
-    # offer to re-run
 
-# helper functions (omit functionalities already provided by the openweather endpoint):
-    # validate_city(city, state) validates whether city / country exists. What API module?
-    # format_direction(degrees): north, northeast, east, etc... + R
-    # format_humidity(humid): converts humidity to a string of integer & percentage sign
-    # format_speed(speed, country): string of integer with mph or mkh depending on country
-
-# main() function:
-    # distinguish whether app is being called from the python repl or the command line.
+API_KEY = os.getenv('OPEN_WEATHER_API_KEY')
+if API_KEY is None:
+    API_KEY = input('please provide API key: ')
+    os.environ['OPEN_WEATHER_API_KEY'] = API_KEY
 
 
 class TestProject(unittest.TestCase):
@@ -101,12 +103,13 @@ class TestProject(unittest.TestCase):
         - test_prompt_location_info
         - test_location_info_is_valid
         - test_construct_url
+        - test_get_weather
     '''
 
 
     def test_prompt_location_info(self):
         '''
-        function "prompt_location_info" should
+        function 'prompt_location_info' should
             - prompt for city, state, zip
             - return dictionary of string values for city, state, zip
         '''
@@ -121,7 +124,7 @@ class TestProject(unittest.TestCase):
 
     def test_location_info_is_valid(self):
         '''
-            function "location_info_is_valid" should
+            function 'location_info_is_valid' should
                 - return (bool, message) tuple
                 - require numeric zip
                 - require 5-character zip
@@ -175,14 +178,25 @@ class TestProject(unittest.TestCase):
     def test_construct_url(self):
         '''
         function 'construct_url' should
+            - API key:
+                - check environment variables
+                - prompt user
             - until location is valid:
                 - call prompt_location_info
                 - validate using 'location_info_is_valid'
                 - validate user intention
+            - latitude / longitude!
             - construct query string
             - return URL
         '''
-        return None
+        test_url = construct_url(
+            zip_code='78727',
+            api_key=API_KEY)
+        self.assertEqual(
+            test_url,
+            'http://api.openweathermap.org/data/2.5/weather?' + 
+            'lat=30.4254&lon=-97.7195&appid=' +
+            '06de9d0d22fa2dff3a3ef81a85009c5e')
 
 
     def test_get_weather(self):
@@ -190,22 +204,47 @@ class TestProject(unittest.TestCase):
         function 'get_weather' should
             - API token?
             - call url
-            - return request as dict
-        '''
-        return None
-
-    def test_display_weather(self):
-        '''
-        function 'display weather' should
             - select attributes
-            - convert dates to human-readable?
-            - other human-readable?
-            - print and return table
+            - convert attributes to human-readable?
+            - print and return dict
         '''
-        return None
+        test_url = construct_url(
+            zip_code='78727',
+            api_key=API_KEY)
+        test_data = get_weather(test_url)
+        self.assertTrue(isinstance(test_data, dict))
 
 
 print(pylint.epylint.py_run('project.py'))
+
+USER_CONTINUE = True
+while USER_CONTINUE:
+    VALID_AND_INTENTIONAL_LOCATION = False
+    LOCATION = None
+    while not VALID_AND_INTENTIONAL_LOCATION:
+        LOCATION = prompt_location_info()
+        VALID_LOCATION = location_info_is_valid(LOCATION)
+        if not VALID_LOCATION[0]:
+            print(VALID_LOCATION[1])
+        else:
+            print('is this the LOCATION you want to check?')
+            print(LOCATION)
+            INTENTIONAL_LOCATION = input('yes or no: ')
+            if INTENTIONAL_LOCATION in ('yes', 'y'):
+                VALID_AND_INTENTIONAL_LOCATION = True
+
+
+    WEATHER_URL = construct_url(LOCATION['zip'], API_KEY)
+
+    WEATHER_DATA = get_weather(WEATHER_URL)
+
+    print(WEATHER_DATA)
+
+    print('would you like to run the program again?')
+    RUN_AGAIN = input('yes or no: ')
+    if RUN_AGAIN in ('no', 'n'):
+        USER_CONTINUE = False
+
 
 if __name__ == '__main__':
     unittest.main()
