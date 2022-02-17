@@ -235,6 +235,8 @@ while USER_CONTINUE:
 
 
     WEATHER_URL = construct_url(LOCATION['zip'], API_KEY)
+    
+    print(WEATHER_URL)
 
     WEATHER_DATA = get_weather(WEATHER_URL)
 
@@ -250,4 +252,4 @@ if __name__ == '__main__':
     unittest.main()
     # command-line args?
 else:
-    unittest.main(module='primary_colors_strings', exit=False)
+    unittest.main(module='project', exit=False)
