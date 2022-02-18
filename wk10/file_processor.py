@@ -1,68 +1,99 @@
 '''
-File Processor:
-    - prompts user for directory & filename
-    - validates directory existence
-    - prompts for name, address, phone number
-    - creates file with csv information
-    - reads file
-    - displays file contents to user
+This week we will create a program that performs file processing activities.
+Your program this week will use the OS library in order to validate that a directory exists before
+creating a file in that directory. Your program will prompt the user for the directory they would
+like to save the file in as well as the name of the file. The program should then prompt the user
+for their name, address, and phone number. Your program will write this data to a comma separated
+line in a file and store the file in the directory specified by the user.
+
+Once the data has been written your program should read the file you just wrote to the file system
+and display the file contents to the user for validation purposes.
 
 Submit a link to your Github repository.
-
-ToDo / wishlist:
-    - interactively build filepath (outside assignment scope)
 '''
 import os
-import re
-import pandas
-#import unittest
-#from unittest import mock
+import shutil
+import unittest
+from unittest import mock
+import pylint
+#from prettytable import PrettyTable
 
-print([x for x in dir(os.path) if re.search('is', x)])
-
-def prompt_for_directory():
-    return input('please provide an input directory: ')
-
-
-def prompt_for_file():
-    return input('please provide an input file: ')
-
-
-def directory_exists(input_directory):
-    if os.path.isdir(input_directory):
-        return (True, 'directory exists')
-    elif os.path.isfile(input_directory):
-        return (False, input_directory + ' is a file')
-    elif os.path.exists(input_directory):
-        return (False, input_directory + 
-                ' is something other than a file or directory')
-    else:
-        return (False, input_directory + ' does not exist')
-        
-
-def mkdir(input_directory):
-    try:
-        os.path.makedirs(input_directory)
-        return True
-    except:
-        return False
+def prompt_filepath():
+    '''prompt for and return filepath & filename'''
+    dir_exists = False
+    while not dir_exists:
+        user_directory = input('please provide a (currently existing) directory: ')
+        dir_exists = os.path.isdir(user_directory)
+    user_file = input('please provide a file name: ')
+    user_filepath = user_directory + '/' + user_file
+    return user_filepath
 
 
 def prompt_user_info():
-    name=input('name: ')
-    address=input('address: ')
-    phone_number=input('phone number: ')
-    return {
-        'name': name,
-        'address': address,
-        'phone_number': phone_number
-        }
+    '''prompt for and return name, address, and phone number information'''
+    user_information = {}
+    user_information['name'] = input('please provide a name: ')
+    user_information['address'] = input('please provide an address: ')
+    user_information['phone'] = input('please provide a phone number: ')
+    return user_information
 
 
-#def write_user_info():
-#def read_user_info():
+def write_user_info(user_information, user_filepath):
+    '''write csv user information to filepath (directory path + filename)'''
+    connection_w = open(user_filepath, 'w')
+    connection_w.write(user_information)
+    connection_w.close()
 
-#if __name__ == '__main__':
-#    unittest.main()
-#else:
-#    unittest.main(module='file_processor', exit=False)
+
+def read_user_info(user_filepath):
+    '''read csv information from filepath'''
+    connection_r = open(user_filepath, 'r')
+    print(connection_r.read())
+
+
+def print_user_info(user_data):
+    '''print use info as PrettyTable'''
+    print(user_data)
+
+
+class TestFileProcessor(unittest.TestCase):
+    '''test functions in file_processor'''
+    def setUp(self):
+        if os.path.exists('dumydir'):
+            shutil.rmtree('dumydir')
+        os.mkdir('dumydir')
+        os.mkdir('dumydir/subdumydir')
+
+
+    def tearDown(self):
+        shutil.rmtree('dumydir')
+
+
+    def test_prompt_filepath(self):
+        '''
+        prompt_filepath should:
+            prompt for dir until input dir exists
+            prompt for filename (no adding dirs)
+            return combined dir & filename
+        '''
+        mock_args = [
+            'dumydir/fakedir',
+            'dumydir/subdumydir',
+            'my_file.csv'
+            ]
+        with mock.patch('builtins.input') as mocked_input:
+            mocked_input.side_effect = mock_args
+            result = prompt_filepath()
+        self.assertEqual(
+            result,
+            'dumydir/subdumydir/my_file.csv'
+            )
+
+
+
+print(pylint.epylint.py_run('file_processor.py'))
+
+if __name__ == '__main__':
+    unittest.main()
+else:
+    unittest.main(module='file_processor', exit=False)
