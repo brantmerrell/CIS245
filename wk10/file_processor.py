@@ -76,18 +76,52 @@ class TestFileProcessor(unittest.TestCase):
             prompt for filename (no adding dirs)
             return combined dir & filename
         '''
-        mock_args = [
+        dir_prompts_with_one_fake_dir = [
             'dumydir/fakedir',
             'dumydir/subdumydir',
             'my_file.csv'
             ]
         with mock.patch('builtins.input') as mocked_input:
-            mocked_input.side_effect = mock_args
+            mocked_input.side_effect = dir_prompts_with_one_fake_dir
             result = prompt_filepath()
         self.assertEqual(
             result,
             'dumydir/subdumydir/my_file.csv'
             )
+
+    def test_prompt_user_info(self):
+        '''
+        prompt_user_info:
+            prompts for name, address, phone number
+            validation:
+                name is alphabetical
+                address has 1+ letter and 1+ number
+                phone number consists of 10+ numbers 0-5 of '()-.'
+            return object is a dictionary with keys name, address, phone
+        '''
+        user_prompt_info_sequence = [
+            'John 3 Doe', # name: numers invalid
+            'John Doe', # name: valid
+            '', # address: not enough characters
+            'foo', # address: not enough numbers
+            '123', # address: not enough letters
+            'a1', # address: minimum valid example
+            '(1)2-3.45', # phone: not enough numbers
+            '[1]123.456(78-9)' # phone: invalid brackets
+            '(1)123.456(78-9)' # phone: valid example
+            ]
+        with mock.patch('builtins.input') as mocked_input:
+            mocked_input.side_effect = user_prompt_info_sequence
+            result = prompt_user_info()
+        self.assertEqual(
+            result,
+            {
+                'name': 'John Doe',
+                'address': 'a1',
+                'phone': '(1)123,456(78-9)'
+            }
+        )
+
 
 
 
