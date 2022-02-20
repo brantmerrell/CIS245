@@ -12,10 +12,6 @@ and display the file contents to the user for validation purposes.
 Submit a link to your Github repository.
 '''
 import os
-import shutil
-import unittest
-from unittest import mock
-import pylint
 #from prettytable import PrettyTable
 
 def prompt_filepath():
@@ -55,79 +51,8 @@ def print_user_info(user_data):
     '''print use info as PrettyTable'''
     print(user_data)
 
-
-class TestFileProcessor(unittest.TestCase):
-    '''test functions in file_processor'''
-    def setUp(self):
-        if os.path.exists('dumydir'):
-            shutil.rmtree('dumydir')
-        os.mkdir('dumydir')
-        os.mkdir('dumydir/subdumydir')
-
-
-    def tearDown(self):
-        shutil.rmtree('dumydir')
-
-
-    def test_prompt_filepath(self):
-        '''
-        prompt_filepath should:
-            prompt for dir until input dir exists
-            prompt for filename (no adding dirs)
-            return combined dir & filename
-        '''
-        dir_prompts_with_one_fake_dir = [
-            'dumydir/fakedir',
-            'dumydir/subdumydir',
-            'my_file.csv'
-            ]
-        with mock.patch('builtins.input') as mocked_input:
-            mocked_input.side_effect = dir_prompts_with_one_fake_dir
-            result = prompt_filepath()
-        self.assertEqual(
-            result,
-            'dumydir/subdumydir/my_file.csv'
-            )
-
-    def test_prompt_user_info(self):
-        '''
-        prompt_user_info:
-            prompts for name, address, phone number
-            validation:
-                name is alphabetical
-                address has 1+ letter and 1+ number
-                phone number consists of 10+ numbers 0-5 of '()-.'
-            return object is a dictionary with keys name, address, phone
-        '''
-        user_prompt_info_sequence = [
-            'John 3 Doe', # name: numers invalid
-            'John Doe', # name: valid
-            '', # address: not enough characters
-            'foo', # address: not enough numbers
-            '123', # address: not enough letters
-            'a1', # address: minimum valid example
-            '(1)2-3.45', # phone: not enough numbers
-            '[1]123.456(78-9)' # phone: invalid brackets
-            '(1)123.456(78-9)' # phone: valid example
-            ]
-        with mock.patch('builtins.input') as mocked_input:
-            mocked_input.side_effect = user_prompt_info_sequence
-            result = prompt_user_info()
-        self.assertEqual(
-            result,
-            {
-                'name': 'John Doe',
-                'address': 'a1',
-                'phone': '(1)123,456(78-9)'
-            }
-        )
-
-
-
-
-print(pylint.epylint.py_run('file_processor.py'))
-
-if __name__ == '__main__':
-    unittest.main()
-else:
-    unittest.main(module='file_processor', exit=False)
+#FILEPATH = prompt_filepath()
+#USER_INFO = prompt_user_info()
+#write_user_info(USER_INFO, FILEPATH)
+#USER_INFO_2 = read_user_info(FILEPATH)
+#print_user_info(USER_INFO_2)
