@@ -12,6 +12,7 @@ and display the file contents to the user for validation purposes.
 Submit a link to your Github repository.
 '''
 import os
+import csv
 #from prettytable import PrettyTable
 
 def prompt_filepath():
