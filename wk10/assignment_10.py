@@ -14,9 +14,9 @@ Submit a link to your Github repository.
 import csv
 import os
 FOLDER_PATH = input('please provide folder path: ')
-while not os.path.isdir(FOLDER_PATH):
-    print(FOLDER_PATH + ' is not a directory.')
-    FOLDER_PATH = input('please provide folder path: ')
+if not os.path.isdir(FOLDER_PATH):
+    print('creating folder ' + FOLDER_PATH)
+    os.makedirs(FOLDER_PATH)
 FILE_NAME = input('please provide file name: ')
 USER_NAME = input('please provide your name: ')
 USER_ADDRESS = input('please provide your address: ')
